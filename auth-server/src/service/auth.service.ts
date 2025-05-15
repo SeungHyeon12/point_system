@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { UserRepositoryInterface } from 'src/service/interface/user.repository.interface';
 
 @Injectable()
 export class AuthService {
-  getHello(): string {
-    return 'Hello World!';
-  }
+  constructor(
+    @Inject('USER_REPOSITORY')
+    private readonly userRepository: UserRepositoryInterface,
+  ) {}
 }

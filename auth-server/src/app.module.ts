@@ -4,9 +4,11 @@ import { AuthService } from 'src/service/auth.service';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import mongodbConfig from 'src/common/config/mongodb.config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 
 @Module({
   imports: [
+    InfrastructureModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [mongodbConfig],
