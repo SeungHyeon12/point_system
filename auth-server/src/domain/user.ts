@@ -4,6 +4,7 @@ import {
   verifyPassword,
 } from 'src/common/uitls/hashpassword.function';
 import { UserRole } from 'src/domain/vo/user.role';
+import { UserRoleScopeHelper } from 'src/domain/vo/user.role.scope.helper';
 
 export class User {
   private readonly id: string;
@@ -38,8 +39,12 @@ export class User {
     });
   }
 
-  async checkPassword(requestPassword: string) {
+  async isVerifiedPassword(requestPassword: string) {
     return await verifyPassword(requestPassword, this.password);
+  }
+
+  getAvailableScopes() {
+    return UserRoleScopeHelper.getScopeByRole(this.userRole);
   }
 
   getUserInfo() {
@@ -57,5 +62,13 @@ export class User {
       password: this.password,
       userRole: this.userRole,
     };
+  }
+
+  getId() {
+    return this.id;
+  }
+
+  getRole() {
+    return this.userRole;
   }
 }

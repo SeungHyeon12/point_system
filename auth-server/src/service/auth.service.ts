@@ -1,4 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/domain/user';
 import { UserRole } from 'src/domain/vo/user.role';
 import { UserRepositoryInterface } from 'src/service/interface/user.repository.interface';
@@ -8,6 +14,7 @@ export class AuthService {
   constructor(
     @Inject('USER_REPOSITORY')
     private readonly userRepository: UserRepositoryInterface,
+    private readonly jwtService: JwtService,
   ) {}
 
   async normalUserSignUp(args: { email: string; rawPassword: string }) {
@@ -33,5 +40,42 @@ export class AuthService {
     });
 
     await this.userRepository.createUser(newUser);
+  }
+
+  async signIn(args: { email: string; rawPassword: string }) {
+    const user = await this.userRepository.getUserByEmail(args.email);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    if (!(await user.isVerifiedPassword(args.rawPassword))) {
+      throw new UnauthorizedException('invalid password or id');
+    }
+
+    const accessToken = this.jwtService.sign(
+      {
+        sub: user.getId(),
+        role: user.getRole(),
+        scopes: [...user.getAvailableScopes()],
+      },
+      {
+        expiresIn: '15m',
+      },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      {
+        sub: user.getId(),
+      },
+      {
+        expiresIn: '10h',
+      },
+    );
+
+    return {
+      refreshToken,
+      accessToken,
+    };
   }
 }
