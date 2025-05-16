@@ -7,7 +7,22 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/domain/user';
 import { UserRole } from 'src/domain/vo/user.role';
+import { ScopeValues } from 'src/domain/vo/user.role.scope.helper';
 import { UserRepositoryInterface } from 'src/service/interface/user.repository.interface';
+
+export type AuthTokenType =
+  | {
+      sub: string;
+      role: UserRole;
+      scope: string[];
+      type: 'access';
+      exp: number;
+    }
+  | {
+      sub: string;
+      type: 'refresh';
+      exp: number;
+    };
 
 @Injectable()
 export class AuthService {
@@ -57,7 +72,8 @@ export class AuthService {
       {
         sub: user.getId(),
         role: user.getRole(),
-        scopes: [...user.getAvailableScopes()],
+        scope: [...user.getAvailableScopes()],
+        type: 'access',
       },
       {
         expiresIn: '15m',
@@ -67,6 +83,7 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(
       {
         sub: user.getId(),
+        type: 'refresh',
       },
       {
         expiresIn: '10h',
@@ -77,5 +94,48 @@ export class AuthService {
       refreshToken,
       accessToken,
     };
+  }
+
+  async tokenIntrospect(args: { token: string }) {
+    const payload = this.jwtService.verify<AuthTokenType>(args.token);
+
+    if (!payload) {
+      throw new UnauthorizedException('invalid token');
+    }
+
+    const user = await this.userRepository.getUserById(payload.sub);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    if (payload.type == 'access') {
+      if (user.getId() !== payload.sub) {
+        throw new UnauthorizedException('invalid token');
+      }
+
+      if (!user.isScopesCorrect(payload.scope)) {
+        throw new UnauthorizedException('invalid token');
+      }
+
+      return {
+        sub: payload.sub,
+        active: true,
+        scope: payload.scope as ScopeValues[],
+        exp: payload?.exp,
+      };
+    } else if (payload.type == 'refresh') {
+      if (user.getId() !== payload.sub) {
+        throw new UnauthorizedException('invalid token');
+      }
+
+      return {
+        sub: payload.sub,
+        active: true,
+        exp: payload?.exp,
+      };
+    } else {
+      throw new UnauthorizedException('invalid token type');
+    }
   }
 }

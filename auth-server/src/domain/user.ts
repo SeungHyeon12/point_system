@@ -4,7 +4,10 @@ import {
   verifyPassword,
 } from 'src/common/uitls/hashpassword.function';
 import { UserRole } from 'src/domain/vo/user.role';
-import { UserRoleScopeHelper } from 'src/domain/vo/user.role.scope.helper';
+import {
+  ScopeValues,
+  UserRoleScopeHelper,
+} from 'src/domain/vo/user.role.scope.helper';
 
 export class User {
   private readonly id: string;
@@ -45,6 +48,13 @@ export class User {
 
   getAvailableScopes() {
     return UserRoleScopeHelper.getScopeByRole(this.userRole);
+  }
+
+  isScopesCorrect(scopes: string[]) {
+    const availableScopes = this.getAvailableScopes();
+    return scopes.every((scope) =>
+      availableScopes.includes(scope as ScopeValues),
+    );
   }
 
   getUserInfo() {
