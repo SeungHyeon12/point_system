@@ -106,7 +106,7 @@ export class AuthService {
     const user = await this.userRepository.getUserById(payload.sub);
 
     if (!user) {
-      throw new NotFoundException('user not found');
+      throw new UnauthorizedException('user not found');
     }
 
     if (payload.type == 'access') {
@@ -137,5 +137,40 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('invalid token type');
     }
+  }
+
+  async refreshAccessToken(args: {
+    bearerToken: string;
+  }): Promise<{ accessToken: string }> {
+    if (!args.bearerToken || !args.bearerToken?.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Refresh token is missing or invalid');
+    }
+
+    const refreshToken = args.bearerToken.replace('Bearer ', '').trim();
+
+    const payload = this.jwtService.verify<AuthTokenType>(refreshToken);
+    if (payload.type !== 'refresh') {
+      throw new UnauthorizedException('invalid token type');
+    }
+
+    const user = await this.userRepository.getUserById(payload.sub);
+
+    if (!user) {
+      throw new UnauthorizedException('user not found');
+    }
+
+    const accessToken = this.jwtService.sign(
+      {
+        sub: user.getId(),
+        role: user.getRole(),
+        scope: [...user.getAvailableScopes()],
+        type: 'access',
+      },
+      {
+        expiresIn: '15m',
+      },
+    );
+
+    return { accessToken };
   }
 }
