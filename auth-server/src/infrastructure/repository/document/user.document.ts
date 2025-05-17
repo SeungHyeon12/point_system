@@ -34,6 +34,11 @@ export class UserDocument {
   })
   userRole: UserRole;
 
+  @Prop({
+    type: String,
+  })
+  recommenderId?: string;
+
   createdAt: Date;
 
   updatedAt: Date;
@@ -44,6 +49,7 @@ export class UserDocument {
       email: this.email,
       password: this.password,
       userRole: this.userRole,
+      recommenderId: this.recommenderId,
     });
   }
 }

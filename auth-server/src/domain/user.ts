@@ -14,23 +14,27 @@ export class User {
   private email: string;
   private password: string;
   private userRole: UserRole;
+  private recommenderId?: string;
 
   constructor(args: {
     id: string;
     email: string;
     password: string;
     userRole: UserRole;
+    recommenderId?: string;
   }) {
     this.id = args.id;
     this.email = args.email;
     this.password = args.password;
     this.userRole = args.userRole;
+    this.recommenderId = args.recommenderId;
   }
 
   static async createUser(args: {
     email: string;
     rawPassword: string;
     userRole: UserRole;
+    recommenderId?: string;
   }) {
     const hashedPassword = await hashPassword(args.rawPassword);
     const id = createUniqueId();
@@ -39,6 +43,7 @@ export class User {
       email: args.email,
       password: hashedPassword,
       userRole: args.userRole,
+      recommenderId: args.recommenderId,
     });
   }
 
@@ -62,6 +67,7 @@ export class User {
       id: this.id,
       email: this.email,
       userRole: this.userRole,
+      recommenderId: this.recommenderId,
     };
   }
 

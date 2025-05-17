@@ -32,12 +32,27 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async normalUserSignUp(args: { email: string; rawPassword: string }) {
+  async normalUserSignUp(args: {
+    email: string;
+    rawPassword: string;
+    recommenderEmail?: string;
+  }) {
     // 비밀번호의 유효성 로직은 우선순위가 아님으로 배재
+    let recommender: User | null = null;
+    if (args.recommenderEmail) {
+      recommender = await this.userRepository.getUserByEmail(
+        args.recommenderEmail,
+      );
+      if (!recommender) {
+        throw new NotFoundException('recommender not found');
+      }
+    }
+
     const newUser = await User.createUser({
       email: args.email,
       rawPassword: args.rawPassword,
       userRole: UserRole.USER,
+      recommenderId: recommender?.getId(),
     });
 
     await this.userRepository.createUser(newUser);
