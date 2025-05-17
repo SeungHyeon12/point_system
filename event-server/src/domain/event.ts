@@ -61,28 +61,27 @@ export class Event {
     return this.eventCondition === EventCondition.LOTTERY;
   }
 
+  getEventReward() {
+    return this.reward;
+  }
+
+  getEventCondition() {
+    return this.eventCondition;
+  }
+
+  // update는 Put 을 통해서 form 으로 수정하도록 한다.
   updateEvent(args: {
-    eventName?: string;
-    eventCondition?: EventCondition;
-    reward?: Reward;
-    startDate?: string;
-    endDate?: string;
+    eventName: string;
+    eventCondition: EventCondition;
+    reward: Reward;
+    startDate: string;
+    endDate: string;
   }) {
-    if (args.eventName) {
-      this.eventName = args.eventName;
-    }
-    if (args.eventCondition) {
-      this.eventCondition = args.eventCondition;
-    }
-    if (args.reward) {
-      this.reward = args.reward;
-    }
-    if (args.startDate) {
-      this.startDate = args.startDate;
-    }
-    if (args.endDate) {
-      this.endDate = args.endDate;
-    }
+    this.eventName = args.eventName;
+    this.eventCondition = args.eventCondition;
+    this.reward = args.reward;
+    this.startDate = args.startDate;
+    this.endDate = args.endDate;
   }
 
   getEventInfo() {

@@ -17,9 +17,17 @@ import {
 import { EventRepository } from './repository/event.repository';
 import { RewardRepository } from './repository/reward.repository';
 import { UserRewardResultRepository } from './repository/user.reward.result.repository';
+import { HttpModule } from '@nestjs/axios';
+import { HttpRequester } from './dataRequest/http.requester';
 
 @Module({
   imports: [
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 5000,
+        maxRedirects: 5,
+      }),
+    }),
     ConfigModule.forFeature(mongodbConfig),
     MongooseModule.forFeature([
       {
@@ -49,11 +57,16 @@ import { UserRewardResultRepository } from './repository/user.reward.result.repo
       provide: 'USER_REWARD_RESULT_REPOSITORY',
       useClass: UserRewardResultRepository,
     },
+    {
+      provide: 'DATA_REQUESTER',
+      useClass: HttpRequester,
+    },
   ],
   exports: [
     'EVENT_REPOSITORY',
     'REWARD_REPOSITORY',
     'USER_REWARD_RESULT_REPOSITORY',
+    'DATA_REQUESTER',
   ],
 })
 export class InfrastructureModule {}

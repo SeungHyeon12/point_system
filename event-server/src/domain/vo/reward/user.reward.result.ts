@@ -1,5 +1,4 @@
 import { createUniqueId } from 'src/common/uitls/createUniqueId.function';
-import { Reward } from './reward';
 import { Event } from '../../event';
 import { UserRewardResultStatus } from './user.reward.result.status';
 import { EventCondition } from '../condition/event.condition';
@@ -56,18 +55,14 @@ export class UserRewardResult {
     this.rewardReceivedAt = args.rewardReceivedAt;
   }
 
-  static rewardSuccessResult(args: {
-    userId: string;
-    event: Event;
-    reward: Reward;
-  }) {
+  static rewardSuccessResult(args: { userId: string; event: Event }) {
     return new UserRewardResult({
       id: createUniqueId(),
       userId: args.userId,
       eventPartialInfo: args.event.getEventInfo(),
       status: UserRewardResultStatus.RECEIVED,
       isConditionCompleted: true,
-      rewardPartialInfo: args.reward.getRewardInfo(),
+      rewardPartialInfo: args.event.getEventReward().getRewardInfo(),
       rewardReceivedAt: new Date().toISOString(),
     });
   }
@@ -75,11 +70,9 @@ export class UserRewardResult {
   static registerNeedReviewConditionReward({
     userId,
     event,
-    reward,
   }: {
     userId: string;
     event: Event;
-    reward: Reward;
   }) {
     return new UserRewardResult({
       id: createUniqueId(),
@@ -87,24 +80,21 @@ export class UserRewardResult {
       eventPartialInfo: event.getEventInfo(),
       status: UserRewardResultStatus.REVIEW,
       isConditionCompleted: true,
-      rewardPartialInfo: reward.getRewardInfo(),
+      rewardPartialInfo: event.getEventReward().getRewardInfo(),
       rewardReceivedAt: null,
     });
   }
 
-  static fialedResult(args: { userId: string; event: Event; reward: Reward }) {
-    return new UserRewardResult({
-      id: createUniqueId(),
-      userId: args.userId,
-      eventPartialInfo: args.event.getEventInfo(),
-      status: UserRewardResultStatus.REJECTED,
-      isConditionCompleted: false,
-      rewardPartialInfo: args.reward.getRewardInfo(),
-      rewardReceivedAt: null,
-    });
+  rejectReward() {
+    this.status = UserRewardResultStatus.REJECTED;
   }
 
-  save() {
+  approveReward() {
+    this.status = UserRewardResultStatus.RECEIVED;
+    this.rewardReceivedAt = new Date().toISOString();
+  }
+
+  getInfo() {
     return {
       id: this.id,
       userId: this.userId,

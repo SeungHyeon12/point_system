@@ -3,6 +3,7 @@ import {
   hashPassword,
   verifyPassword,
 } from 'src/common/uitls/hashpassword.function';
+import { isDifferentDay } from 'src/common/uitls/is.diffrent.day.function';
 import { UserRole } from 'src/domain/vo/user.role';
 import {
   ScopeValues,
@@ -15,6 +16,8 @@ export class User {
   private password: string;
   private userRole: UserRole;
   private recommenderId?: string;
+  private lastLoginDate?: string;
+  private loginDays: number;
 
   constructor(args: {
     id: string;
@@ -22,12 +25,16 @@ export class User {
     password: string;
     userRole: UserRole;
     recommenderId?: string;
+    lastLoginDate?: string;
+    loginDays: number;
   }) {
     this.id = args.id;
     this.email = args.email;
     this.password = args.password;
     this.userRole = args.userRole;
     this.recommenderId = args.recommenderId;
+    this.lastLoginDate = args.lastLoginDate;
+    this.loginDays = args.loginDays;
   }
 
   static async createUser(args: {
@@ -44,6 +51,7 @@ export class User {
       password: hashedPassword,
       userRole: args.userRole,
       recommenderId: args.recommenderId,
+      loginDays: 0,
     });
   }
 
@@ -62,12 +70,26 @@ export class User {
     );
   }
 
+  signIn() {
+    if (!this.lastLoginDate) {
+      this.loginDays += 1;
+      this.lastLoginDate = new Date().toISOString();
+      return;
+    }
+    if (isDifferentDay(new Date(this.lastLoginDate), new Date())) {
+      this.loginDays += 1;
+    }
+    this.lastLoginDate = new Date().toISOString();
+  }
+
   getUserInfo() {
     return {
       id: this.id,
       email: this.email,
       userRole: this.userRole,
       recommenderId: this.recommenderId,
+      lastLoginDate: this.lastLoginDate,
+      loginDays: this.loginDays,
     };
   }
 
@@ -77,6 +99,7 @@ export class User {
       email: this.email,
       password: this.password,
       userRole: this.userRole,
+      loginDays: this.loginDays,
     };
   }
 

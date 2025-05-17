@@ -17,8 +17,14 @@ export class UserRewardResultRepository
     private readonly userRewardResultModel: Model<UserRewardResultSchema>,
   ) {}
 
+  async getById(id: string): Promise<UserRewardResult | null> {
+    const result = await this.userRewardResultModel.findById(id);
+
+    return result ? result.toDomain() : null;
+  }
+
   async create(userRewardResult: UserRewardResult): Promise<void> {
-    await this.userRewardResultModel.create({ ...userRewardResult.save() });
+    await this.userRewardResultModel.create({ ...userRewardResult.getInfo() });
   }
 
   async getAllByUserId(userId: string): Promise<UserRewardResult[]> {
@@ -36,5 +42,13 @@ export class UserRewardResultRepository
       .find({ deletedAt: null })
       .sort({ createdAt: -1 });
     return data.map((rewardResult) => rewardResult.toDomain());
+  }
+
+  async update(userResult: UserRewardResult): Promise<void> {
+    const { id, ...updateData } = userResult.getInfo();
+    await this.userRewardResultModel.updateOne(
+      { _id: id },
+      { $set: updateData },
+    );
   }
 }

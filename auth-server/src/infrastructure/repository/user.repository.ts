@@ -15,7 +15,7 @@ export class UserRepostiory implements UserRepositoryInterface {
     private readonly userDocument: Model<UserSchema>,
   ) {}
 
-  async createUser(user: User): Promise<void> {
+  async create(user: User): Promise<void> {
     await this.userDocument.create({ ...user.getCreateUserInfo() });
   }
 
@@ -29,5 +29,14 @@ export class UserRepostiory implements UserRepositoryInterface {
   async getUserById(id: string): Promise<User | null> {
     const data = await this.userDocument.findById(id);
     return data ? data.toDomain() : null;
+  }
+
+  async update(user: User): Promise<void> {
+    const { id, ...updateData } = user.getUserInfo();
+    await this.userDocument.updateOne({ _id: id }, updateData);
+  }
+
+  async getRecommenderCount(id: string): Promise<number> {
+    return this.userDocument.countDocuments({ recommenderId: id });
   }
 }

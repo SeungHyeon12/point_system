@@ -18,6 +18,7 @@ export class UserDocument {
   @Prop({
     required: true,
     type: String,
+    unique: true,
   })
   email: string;
 
@@ -39,6 +40,17 @@ export class UserDocument {
   })
   recommenderId?: string;
 
+  @Prop({
+    type: String,
+  })
+  lastLoginAt?: string;
+
+  @Prop({
+    required: true,
+    type: Number,
+  })
+  loginDays: number;
+
   createdAt: Date;
 
   updatedAt: Date;
@@ -50,6 +62,8 @@ export class UserDocument {
       password: this.password,
       userRole: this.userRole,
       recommenderId: this.recommenderId,
+      lastLoginDate: this.lastLoginAt,
+      loginDays: this.loginDays,
     });
   }
 }

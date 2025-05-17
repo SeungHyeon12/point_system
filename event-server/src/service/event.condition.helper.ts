@@ -1,39 +1,44 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { EventCondition } from '../domain/vo/condition/event.condition';
+import { EventRepositoryInterface } from './interface/event.repository.interface';
+import { DataRequester } from './interface/data.requester.interface';
 
-export class EventConditionHandler {
-  static validateByCondition(args: {
+@Injectable()
+export class EventConditionHelper {
+  constructor(
+    @Inject('EVENT_REPOSITORY')
+    private readonly eventRepository: EventRepositoryInterface,
+    @Inject('DATA_REQUESTER')
+    private readonly dataRequester: DataRequester,
+  ) {}
+
+  async validateByCondition(args: {
     condition: EventCondition;
-    value: unknown;
+    userId: string;
   }) {
     switch (args.condition) {
       case EventCondition.LOGIN_SEVEN_DAYS:
-        return this.validateLoginSevenDaysCondition(args.value);
+        return await this.validateLoginSevenDaysCondition(args.userId);
       case EventCondition.INVITE_THREE_FRIENDS:
-        return this.validtateInviteThreeFriendsCondition(args.value);
+        return await this.validtateInviteThreeFriendsCondition(args.userId);
       default:
-        throw new Error('Invalid event condition');
+        return true;
     }
   }
 
-  static validtateInviteThreeFriendsCondition(invitedFriendList: unknown) {
-    if (!Array.isArray(invitedFriendList)) {
+  private async validtateInviteThreeFriendsCondition(userId: string) {
+    const userData = await this.dataRequester.requestUserData(userId);
+    if (userData.recommenderCount < 3) {
       return false;
     }
-    if (invitedFriendList.length < 3) {
-      return false;
-    }
-
     return true;
   }
 
-  static validateLoginSevenDaysCondition(userLoginDays: unknown) {
-    if (typeof userLoginDays !== 'number') {
+  private async validateLoginSevenDaysCondition(userId: string) {
+    const userData = await this.dataRequester.requestUserData(userId);
+    if (userData.loginDays < 7) {
       return false;
     }
-    if (userLoginDays < 7) {
-      return false;
-    }
-
     return true;
   }
 }

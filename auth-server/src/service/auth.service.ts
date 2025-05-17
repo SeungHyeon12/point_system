@@ -55,7 +55,7 @@ export class AuthService {
       recommenderId: recommender?.getId(),
     });
 
-    await this.userRepository.createUser(newUser);
+    await this.userRepository.create(newUser);
   }
 
   async adminUserSignUp(args: {
@@ -69,7 +69,7 @@ export class AuthService {
       userRole: args.role,
     });
 
-    await this.userRepository.createUser(newUser);
+    await this.userRepository.create(newUser);
   }
 
   async signIn(args: { email: string; rawPassword: string }) {
@@ -82,6 +82,8 @@ export class AuthService {
     if (!(await user.isVerifiedPassword(args.rawPassword))) {
       throw new UnauthorizedException('invalid password or id');
     }
+
+    await this.userRepository.update(user);
 
     const accessToken = this.jwtService.sign(
       {
@@ -187,5 +189,19 @@ export class AuthService {
     );
 
     return { accessToken };
+  }
+
+  async getUserInfo(args: { userId: string }) {
+    const user = await this.userRepository.getUserById(args.userId);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    const recommenderCount = await this.userRepository.getRecommenderCount(
+      args.userId,
+    );
+
+    return { ...user.getUserInfo(), recommenderCount };
   }
 }

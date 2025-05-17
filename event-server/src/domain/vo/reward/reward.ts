@@ -3,9 +3,9 @@ import { RewardType } from './reward.type';
 
 export class Reward {
   private readonly id: string;
-  private readonly rewardName: string;
-  private readonly rewardType: RewardType;
-  private readonly rewardAmount: number;
+  private rewardName: string;
+  private rewardType: RewardType;
+  private rewardAmount: number;
 
   constructor(args: {
     id: string;
@@ -30,6 +30,16 @@ export class Reward {
       rewardType: args.rewardType,
       rewardAmount: args.rewardAmount,
     });
+  }
+
+  updatereward(args: {
+    rewardName: string;
+    rewardType: RewardType;
+    rewardAmount: number;
+  }) {
+    this.rewardName = args.rewardName;
+    this.rewardType = args.rewardType;
+    this.rewardAmount = args.rewardAmount;
   }
 
   getId() {

@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
 import { SignInRequestDTO } from 'src/controller/dto/request/sign.in.request.dto';
 import { SignUpRequestDTO } from 'src/controller/dto/request/sign.up.request.dto';
 import { SignInResponseDto } from 'src/controller/dto/response/sign.in.response.dto';
@@ -6,10 +6,17 @@ import { AuthService } from 'src/service/auth.service';
 import { TokenIntrospectRequestDTO } from './dto/request/token.introspect.request.dto';
 import { TokenIntrospectResponseDTO } from './dto/response/token.introspect.response.dto';
 import { RefreshAccessTokenResponseDTO } from './dto/response/refresh.access.token.response.dto';
+import { GetUserInfoResponseDTO } from './dto/response/get.user.info.response.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('user/:userId')
+  async getUserInfo(@Headers('userId') userId: string) {
+    const data = await this.authService.getUserInfo({ userId });
+    return new GetUserInfoResponseDTO(data);
+  }
 
   @Post('sign-up')
   async signUp(@Body() signUpRequest: SignUpRequestDTO) {
