@@ -1,10 +1,25 @@
 import { Module } from '@nestjs/common';
-import { InfrastructureModule } from './infrastructure/infrastructure.module';
+import { ConfigModule, ConfigType } from '@nestjs/config';
+import mongodbConfig from 'src/common/config/mongodb.config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { EventController } from './controller/event.controller';
 import { EventService } from './service/event.service';
 
 @Module({
-  imports: [InfrastructureModule],
+  imports: [
+    InfrastructureModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [mongodbConfig],
+    }),
+    MongooseModule.forRootAsync({
+      inject: [mongodbConfig.KEY],
+      useFactory: (config: ConfigType<typeof mongodbConfig>) => ({
+        uri: config.mongoURI,
+      }),
+    }),
+  ],
   controllers: [EventController],
   providers: [EventService],
 })

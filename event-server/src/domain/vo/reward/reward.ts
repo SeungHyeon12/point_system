@@ -36,7 +36,7 @@ export class Reward {
     return this.id;
   }
 
-  getInfo() {
+  getRewardInfo() {
     return {
       id: this.id,
       rewardName: this.rewardName,

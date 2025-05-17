@@ -2,30 +2,58 @@ import { createUniqueId } from 'src/common/uitls/createUniqueId.function';
 import { Reward } from './reward';
 import { Event } from '../../event';
 import { UserRewardResultStatus } from './user.reward.result.status';
+import { EventCondition } from '../condition/event.condition';
+import { RewardType } from './reward.type';
 
 export class UserRewardResult {
   id: string;
   userId: string;
-  event: Event;
-  reward: Reward;
+  eventPartialSnapshot: {
+    id: string;
+    eventName: string;
+    eventCondition: EventCondition;
+    isActive: boolean;
+    startDate: string;
+    endDate: string;
+  };
+  rewardPartialSnapshot: {
+    id: string;
+    rewardName: string;
+    rewardType: RewardType;
+    rewardAmount: number;
+  };
   status: UserRewardResultStatus;
-  receiveAt: string | null;
+  isConditionCompleted: boolean;
+  rewardReceivedAt: string | null;
 
   constructor(args: {
     id: string;
     userId: string;
     status: UserRewardResultStatus;
     isConditionCompleted: boolean;
-    event: Event;
-    reward: Reward;
-    receiveAt: string | null;
+    eventPartialInfo: {
+      id: string;
+      eventName: string;
+      eventCondition: EventCondition;
+      isActive: boolean;
+      startDate: string;
+      endDate: string;
+    };
+    rewardPartialInfo: {
+      id: string;
+      rewardName: string;
+      rewardType: RewardType;
+      rewardAmount: number;
+    };
+    rewardReceivedAt: string | null;
   }) {
     this.id = args.id;
     this.userId = args.userId;
     this.status = args.status;
-    this.event = args.event;
-    this.reward = args.reward;
-    this.receiveAt = args.receiveAt;
+    this.isConditionCompleted = args.isConditionCompleted;
+    this.eventPartialSnapshot = args.eventPartialInfo;
+    this.rewardPartialSnapshot = args.rewardPartialInfo;
+    this.rewardReceivedAt = args.rewardReceivedAt;
   }
 
   static rewardSuccessResult(args: {
@@ -36,11 +64,11 @@ export class UserRewardResult {
     return new UserRewardResult({
       id: createUniqueId(),
       userId: args.userId,
-      event: args.event,
+      eventPartialInfo: args.event.getEventInfo(),
       status: UserRewardResultStatus.RECEIVED,
       isConditionCompleted: true,
-      reward: args.reward,
-      receiveAt: new Date().toISOString(),
+      rewardPartialInfo: args.reward.getRewardInfo(),
+      rewardReceivedAt: new Date().toISOString(),
     });
   }
 
@@ -56,11 +84,11 @@ export class UserRewardResult {
     return new UserRewardResult({
       id: createUniqueId(),
       userId,
-      event,
+      eventPartialInfo: event.getEventInfo(),
       status: UserRewardResultStatus.REVIEW,
       isConditionCompleted: true,
-      reward,
-      receiveAt: null,
+      rewardPartialInfo: reward.getRewardInfo(),
+      rewardReceivedAt: null,
     });
   }
 
@@ -68,11 +96,11 @@ export class UserRewardResult {
     return new UserRewardResult({
       id: createUniqueId(),
       userId: args.userId,
-      event: args.event,
+      eventPartialInfo: args.event.getEventInfo(),
       status: UserRewardResultStatus.REJECTED,
       isConditionCompleted: false,
-      reward: args.reward,
-      receiveAt: null,
+      rewardPartialInfo: args.reward.getRewardInfo(),
+      rewardReceivedAt: null,
     });
   }
 
@@ -80,13 +108,13 @@ export class UserRewardResult {
     return {
       id: this.id,
       userId: this.userId,
-      event: {
-        ...this.event.getEventInfo(),
+      eventPartialSnapshot: {
+        ...this.eventPartialSnapshot,
       },
       reward: {
-        ...this.reward.getInfo(),
+        ...this.rewardPartialSnapshot,
       },
-      receiveAt: this.receiveAt ?? null,
+      rewardReceivedAt: this.rewardReceivedAt ?? null,
     };
   }
 }

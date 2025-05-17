@@ -13,7 +13,7 @@ export class UserDocument {
     required: true,
     type: String,
   })
-  id: string;
+  _id: string;
 
   @Prop({
     required: true,
@@ -45,7 +45,7 @@ export class UserDocument {
 
   toDomain() {
     return new User({
-      id: this.id,
+      id: this._id,
       email: this.email,
       password: this.password,
       userRole: this.userRole,

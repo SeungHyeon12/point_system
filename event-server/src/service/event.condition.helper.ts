@@ -1,4 +1,4 @@
-import { EventCondition } from './event.condition';
+import { EventCondition } from '../domain/vo/condition/event.condition';
 
 export class EventConditionHandler {
   static validateByCondition(args: {
