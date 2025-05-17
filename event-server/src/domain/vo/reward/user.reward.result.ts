@@ -104,7 +104,7 @@ export class UserRewardResult {
     });
   }
 
-  saveUserRewardResult() {
+  save() {
     return {
       id: this.id,
       userId: this.userId,

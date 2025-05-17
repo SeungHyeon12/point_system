@@ -1,6 +1,7 @@
 import { Reward } from 'src/domain/vo/reward/reward';
 
 export interface RewardRepositoryInterface {
-  getRewardBy(id: string): Promise<Reward>;
-  getRewards(): Promise<Reward[]>;
+  create(reward: Reward): Promise<void>;
+  getById(id: string): Promise<Reward | null>;
+  getAll(): Promise<Reward[]>;
 }

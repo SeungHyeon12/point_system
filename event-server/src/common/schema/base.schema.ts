@@ -4,9 +4,7 @@ export abstract class BaseSchema {
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;
 
-  @Prop()
-  createdAt: string;
+  createdAt: Date;
 
-  @Prop()
-  updatedAt: string;
+  updatedAt: Date;
 }

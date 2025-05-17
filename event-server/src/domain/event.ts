@@ -96,4 +96,22 @@ export class Event {
       endDate: this.endDate,
     };
   }
+
+  save() {
+    const rewardInfo = this.reward.getRewardInfo();
+    return {
+      id: this.id,
+      eventName: this.eventName,
+      eventCondition: this.eventCondition,
+      isActive: this.isActive,
+      reward: {
+        id: rewardInfo.id,
+        rewardName: rewardInfo.rewardName,
+        rewardType: rewardInfo.rewardType,
+        rewardAmount: rewardInfo.rewardAmount,
+      },
+      startDate: this.startDate,
+      endDate: this.endDate,
+    };
+  }
 }

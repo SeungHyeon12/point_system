@@ -14,6 +14,9 @@ import {
   UserRewardResultDocument,
   UserRewardResultSchema,
 } from './repository/document/user.reward.result.document';
+import { EventRepository } from './repository/event.repository';
+import { RewardRepository } from './repository/reward.repository';
+import { UserRewardResultRepository } from './repository/user.reward.result.repository';
 
 @Module({
   imports: [
@@ -33,7 +36,24 @@ import {
       },
     ]),
   ],
-  providers: [],
-  exports: [],
+  providers: [
+    {
+      provide: 'EVENT_REPOSITORY',
+      useClass: EventRepository,
+    },
+    {
+      provide: 'REWARD_REPOSITORY',
+      useClass: RewardRepository,
+    },
+    {
+      provide: 'USER_REWARD_RESULT_REPOSITORY',
+      useClass: UserRewardResultRepository,
+    },
+  ],
+  exports: [
+    'EVENT_REPOSITORY',
+    'REWARD_REPOSITORY',
+    'USER_REWARD_RESULT_REPOSITORY',
+  ],
 })
 export class InfrastructureModule {}

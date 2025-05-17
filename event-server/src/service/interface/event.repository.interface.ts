@@ -1,6 +1,8 @@
 import { Event } from 'src/domain/event';
 
 export interface EventRepositoryInterface {
-  getEventById(id: string): Promise<Event>;
-  getEvents(): Promise<Event[]>;
+  create(event: Event): Promise<void>;
+  getById(id: string): Promise<Event | null>;
+  getAllWithoutDeleted(): Promise<Event[]>;
+  getAll(): Promise<Event[]>;
 }
