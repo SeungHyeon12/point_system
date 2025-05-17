@@ -156,7 +156,13 @@ export class EventService {
           userId: args.userId,
           event,
         });
-
-    await this.userRewardResultRpository.create(rewardResult);
+    try {
+      await this.userRewardResultRpository.create(rewardResult);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'ALREADY_EXIST') {
+        throw new ConflictException('event already registered');
+      }
+      throw err;
+    }
   }
 }

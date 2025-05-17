@@ -7,6 +7,7 @@ import { RewardType } from './reward.type';
 export class UserRewardResult {
   id: string;
   userId: string;
+  eventId: string;
   eventPartialSnapshot: {
     id: string;
     eventName: string;
@@ -28,6 +29,7 @@ export class UserRewardResult {
   constructor(args: {
     id: string;
     userId: string;
+    eventId: string;
     status: UserRewardResultStatus;
     isConditionCompleted: boolean;
     eventPartialInfo: {
@@ -48,6 +50,7 @@ export class UserRewardResult {
   }) {
     this.id = args.id;
     this.userId = args.userId;
+    this.eventId = args.eventId;
     this.status = args.status;
     this.isConditionCompleted = args.isConditionCompleted;
     this.eventPartialSnapshot = args.eventPartialInfo;
@@ -59,6 +62,7 @@ export class UserRewardResult {
     return new UserRewardResult({
       id: createUniqueId(),
       userId: args.userId,
+      eventId: args.event.getEventInfo().id,
       eventPartialInfo: args.event.getEventInfo(),
       status: UserRewardResultStatus.RECEIVED,
       isConditionCompleted: true,
@@ -77,6 +81,7 @@ export class UserRewardResult {
     return new UserRewardResult({
       id: createUniqueId(),
       userId,
+      eventId: event.getEventInfo().id,
       eventPartialInfo: event.getEventInfo(),
       status: UserRewardResultStatus.REVIEW,
       isConditionCompleted: true,
@@ -98,6 +103,7 @@ export class UserRewardResult {
     return {
       id: this.id,
       userId: this.userId,
+      eventId: this.eventPartialSnapshot.id,
       eventPartialSnapshot: {
         ...this.eventPartialSnapshot,
       },

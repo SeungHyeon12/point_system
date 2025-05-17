@@ -1,13 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { EventCondition } from '../domain/vo/condition/event.condition';
-import { EventRepositoryInterface } from './interface/event.repository.interface';
 import { DataRequester } from './interface/data.requester.interface';
 
 @Injectable()
 export class EventConditionHelper {
   constructor(
-    @Inject('EVENT_REPOSITORY')
-    private readonly eventRepository: EventRepositoryInterface,
     @Inject('DATA_REQUESTER')
     private readonly dataRequester: DataRequester,
   ) {}

@@ -13,7 +13,15 @@ export class EventRepository implements EventRepositoryInterface {
   ) {}
 
   async create(event: Event): Promise<void> {
-    await this.eventModel.create({ ...event.save() });
+    try {
+      await this.eventModel.create({ ...event.save() });
+    } catch (err: unknown) {
+      const mongoDbError = err as { code: number };
+      if (mongoDbError?.code === 11000) {
+        throw new Error('ALREADY_EXIST');
+      }
+      throw err;
+    }
   }
 
   async getById(id: string): Promise<Event | null> {

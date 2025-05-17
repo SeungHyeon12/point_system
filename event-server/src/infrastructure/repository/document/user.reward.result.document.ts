@@ -54,6 +54,9 @@ export class UserRewardResultDocument
   @Prop({ required: true })
   userId: string;
 
+  @Prop({ required: true, type: String })
+  eventId: string;
+
   @Prop({ type: PartialEventSnapshotSchema, required: true })
   eventPartialSnapshot: {
     id: string;
@@ -85,6 +88,7 @@ export class UserRewardResultDocument
     return new UserRewardResult({
       id: this._id,
       userId: this.userId,
+      eventId: this.eventId,
       eventPartialInfo: {
         id: this.eventPartialSnapshot.id,
         eventName: this.eventPartialSnapshot.eventName,
@@ -113,3 +117,4 @@ export type UserRewardResultSchema = HydratedDocument<
 export const UserRewardResultSchema = SchemaFactory.createForClass(
   UserRewardResultDocument,
 );
+UserRewardResultSchema.index({ userId: 1, eventId: 1 }, { unique: true });
