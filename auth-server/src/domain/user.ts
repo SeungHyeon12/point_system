@@ -61,6 +61,8 @@ export class User {
       this.lastLoginDate = new Date().toISOString();
       return;
     }
+    console.log('lastLoginDate', this.lastLoginDate);
+
     if (isDifferentDay(new Date(this.lastLoginDate), new Date())) {
       this.loginDays += 1;
     }

@@ -16,9 +16,20 @@ export class TokenIntrospectResponseDTO {
   })
   exp: number;
 
-  constructor(args: { sub: string; active: boolean; exp: number }) {
+  @ApiProperty({
+    description: 'userRole',
+  })
+  role?: string;
+
+  constructor(args: {
+    sub: string;
+    active: boolean;
+    exp: number;
+    role?: string;
+  }) {
     this.sub = args.sub;
     this.active = args.active;
     this.exp = args.exp;
+    this.role = args.role;
   }
 }

@@ -19,7 +19,7 @@ export class AdminSignUpRequestDTO {
 
   @ApiPropertyOptional({
     description: '추천인 이메일 주소 (선택 사항)',
-    example: 'recommender@example.com',
+    example: 'OPERATOR',
     enum: ['OPERATOR', 'AUDITOR', 'ADMIN'],
   })
   @IsEnum(['OPERATOR', 'AUDITOR', 'ADMIN'])

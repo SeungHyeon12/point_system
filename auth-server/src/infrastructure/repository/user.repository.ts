@@ -16,19 +16,20 @@ export class UserRepostiory implements UserRepositoryInterface {
   ) {}
 
   async create(user: User): Promise<void> {
-    await this.userDocument.create({ ...user.getCreateUserInfo() });
+    const info = user.getCreateUserInfo();
+    await this.userDocument.create({ ...info, _id: info.id });
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
     const data = await this.userDocument.findOne({
       email,
     });
-    return data ? data.toDomain() : null;
+    return data ? this.toDomain(data) : null;
   }
 
   async getUserById(id: string): Promise<User | null> {
     const data = await this.userDocument.findById(id);
-    return data ? data.toDomain() : null;
+    return data ? this.toDomain(data) : null;
   }
 
   async update(user: User): Promise<void> {
@@ -38,5 +39,17 @@ export class UserRepostiory implements UserRepositoryInterface {
 
   async getRecommenderCount(id: string): Promise<number> {
     return this.userDocument.countDocuments({ recommenderId: id });
+  }
+
+  toDomain(user: UserDocument): User {
+    return new User({
+      id: user._id,
+      email: user.email,
+      password: user.password,
+      userRole: user.userRole,
+      recommenderId: user.recommenderId,
+      lastLoginDate: user.lastLoginDate,
+      loginDays: user.loginDays,
+    });
   }
 }

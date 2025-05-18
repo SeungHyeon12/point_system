@@ -1,10 +1,16 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {
+  JsonWebTokenError,
+  JwtService,
+  NotBeforeError,
+  TokenExpiredError,
+} from '@nestjs/jwt';
 import { User } from 'src/domain/user';
 import { UserRole } from 'src/domain/vo/user.role';
 import { UserRepositoryInterface } from 'src/service/interface/user.repository.interface';
@@ -82,6 +88,7 @@ export class AuthService {
       throw new UnauthorizedException('invalid password or id');
     }
 
+    user.signIn();
     await this.userRepository.update(user);
 
     const accessToken = this.jwtService.sign(
@@ -112,7 +119,19 @@ export class AuthService {
   }
 
   async tokenIntrospect(args: { token: string }) {
-    const payload = this.jwtService.verify<AuthTokenType>(args.token);
+    let payload: AuthTokenType;
+    try {
+      payload = this.jwtService.verify<AuthTokenType>(args.token);
+    } catch (err) {
+      if (
+        err instanceof TokenExpiredError ||
+        err instanceof JsonWebTokenError ||
+        err instanceof NotBeforeError
+      ) {
+        throw new BadRequestException('Malformed or expired JWT token');
+      }
+      throw err;
+    }
 
     if (!payload) {
       throw new UnauthorizedException('invalid token');
@@ -128,9 +147,9 @@ export class AuthService {
       if (user.getId() !== payload.sub) {
         throw new UnauthorizedException('invalid token');
       }
-
       return {
         sub: payload.sub,
+        role: payload.role,
         active: true,
         exp: payload?.exp,
       };

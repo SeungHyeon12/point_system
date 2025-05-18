@@ -43,7 +43,7 @@ export class UserDocument {
   @Prop({
     type: String,
   })
-  lastLoginAt?: string;
+  lastLoginDate?: string;
 
   @Prop({
     required: true,
@@ -62,7 +62,7 @@ export class UserDocument {
       password: this.password,
       userRole: this.userRole,
       recommenderId: this.recommenderId,
-      lastLoginDate: this.lastLoginAt,
+      lastLoginDate: this.lastLoginDate,
       loginDays: this.loginDays,
     });
   }
