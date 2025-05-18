@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -52,12 +53,6 @@ export class AuthService {
         throw new NotFoundException('recommender not found');
       }
     }
-
-    const existingUser = await this.userRepository.getUserByEmail(args.email);
-    if (existingUser) {
-      throw new BadRequestException('email already exists');
-    }
-
     const newUser = await User.createUser({
       email: args.email,
       rawPassword: args.rawPassword,
@@ -65,7 +60,14 @@ export class AuthService {
       recommenderId: recommender?.getId(),
     });
 
-    await this.userRepository.create(newUser);
+    try {
+      await this.userRepository.create(newUser);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'ALREADY_EXIST') {
+        throw new ConflictException('email already exists');
+      }
+      throw err;
+    }
   }
 
   async adminUserSignUp(args: {
@@ -73,18 +75,20 @@ export class AuthService {
     rawPassword: string;
     role: Exclude<UserRole, 'USER'>;
   }) {
-    const existingUser = await this.userRepository.getUserByEmail(args.email);
-    if (existingUser) {
-      throw new BadRequestException('email already exists');
-    }
-
     const newUser = await User.createUser({
       email: args.email,
       rawPassword: args.rawPassword,
       userRole: args.role,
     });
 
-    await this.userRepository.create(newUser);
+    try {
+      await this.userRepository.create(newUser);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'ALREADY_EXIST') {
+        throw new ConflictException('email already exists');
+      }
+      throw err;
+    }
   }
 
   async signIn(args: { email: string; rawPassword: string }) {

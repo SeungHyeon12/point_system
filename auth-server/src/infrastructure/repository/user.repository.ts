@@ -17,7 +17,15 @@ export class UserRepostiory implements UserRepositoryInterface {
 
   async create(user: User): Promise<void> {
     const info = user.getCreateUserInfo();
-    await this.userDocument.create({ ...info, _id: info.id });
+    try {
+      await this.userDocument.create({ ...info, _id: info.id });
+    } catch (err: unknown) {
+      const mongoDbError = err as { code: number };
+      if (mongoDbError?.code === 11000) {
+        throw new Error('ALREADY_EXIST');
+      }
+      throw err;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
