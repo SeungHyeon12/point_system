@@ -6,6 +6,7 @@ import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { EventController } from './controller/event.controller';
 import { EventService } from './service/event.service';
 import { EventConditionHelper } from './service/event.condition.helper';
+import { RewardController } from './controller/reward.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { EventConditionHelper } from './service/event.condition.helper';
       }),
     }),
   ],
-  controllers: [EventController],
+  controllers: [EventController, RewardController],
   providers: [EventService, EventConditionHelper],
 })
 export class AppModule {}
