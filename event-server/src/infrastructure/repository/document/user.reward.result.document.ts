@@ -67,13 +67,13 @@ export class UserRewardResultDocument
     endDate: string;
   };
 
-  @Prop({ type: PartialRewardSnapshotSchema, required: true })
-  rewardPartialSnaopshot: {
+  @Prop({ type: [PartialRewardSnapshotSchema], required: true })
+  rewardsPartialSnaopshot: {
     id: string;
     rewardName: string;
     rewardType: RewardType;
     rewardAmount: number;
-  };
+  }[];
 
   @Prop({ required: true, enum: UserRewardResultStatus })
   status: UserRewardResultStatus;
@@ -97,12 +97,12 @@ export class UserRewardResultDocument
         startDate: this.eventPartialSnapshot.startDate,
         endDate: this.eventPartialSnapshot.endDate,
       },
-      rewardPartialInfo: {
-        id: this.rewardPartialSnaopshot.id,
-        rewardName: this.rewardPartialSnaopshot.rewardName,
-        rewardType: this.rewardPartialSnaopshot.rewardType,
-        rewardAmount: this.rewardPartialSnaopshot.rewardAmount,
-      },
+      rewardsPartialInfo: this.rewardsPartialSnaopshot.map((reward) => ({
+        id: reward.id,
+        rewardName: reward.rewardName,
+        rewardType: reward.rewardType,
+        rewardAmount: reward.rewardAmount,
+      })),
       status: this.status,
       isConditionCompleted: this.isConditionCompleted,
       rewardReceivedAt: this.rewardReceivedAt,

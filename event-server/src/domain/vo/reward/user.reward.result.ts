@@ -111,7 +111,7 @@ export class UserRewardResult {
       eventPartialSnapshot: {
         ...this.eventPartialSnapshot,
       },
-      rewards: [...this.rewardsPartialSnapshot],
+      rewardsPartialSnapshot: [...this.rewardsPartialSnapshot],
       rewardReceivedAt: this.rewardReceivedAt ?? null,
     };
   }
