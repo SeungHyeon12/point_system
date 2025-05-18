@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsString } from 'class-validator';
 
 export class AdminSignUpRequestDTO {
@@ -17,11 +17,12 @@ export class AdminSignUpRequestDTO {
   @IsString()
   password: string;
 
-  @ApiPropertyOptional({
-    description: '추천인 이메일 주소 (선택 사항)',
+  @ApiProperty({
+    description: '사용자 admin role',
     example: 'OPERATOR',
     enum: ['OPERATOR', 'AUDITOR', 'ADMIN'],
   })
+  @IsString()
   @IsEnum(['OPERATOR', 'AUDITOR', 'ADMIN'])
   role: 'OPERATOR' | 'AUDITOR' | 'ADMIN';
 }

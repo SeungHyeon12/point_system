@@ -1,8 +1,8 @@
 // gateway.service.ts
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { AxiosResponse, Method } from 'axios';
+import { AxiosError, AxiosResponse, Method } from 'axios';
 
 @Injectable()
 export class GatewayService {
@@ -18,14 +18,23 @@ export class GatewayService {
       };
     };
   }): Promise<T> {
-    const response: AxiosResponse<T> = await firstValueFrom(
-      this.httpService.request<T>({
-        method: args.method,
-        url: args.url,
-        data: args.options?.body,
-        headers: args.options?.headers,
-      }),
-    );
-    return response.data;
+    try {
+      const response: AxiosResponse<T> = await firstValueFrom(
+        this.httpService.request<T>({
+          method: args.method,
+          url: args.url,
+          data: args.options?.body,
+          headers: args.options?.headers,
+        }),
+      );
+      return response.data;
+    } catch (err) {
+      const axiosErr = err as AxiosError;
+
+      const status = axiosErr.response?.status ?? 500;
+      const message = axiosErr.response?.data ?? 'Internal Server Error';
+
+      throw new HttpException(message, status);
+    }
   }
 }
