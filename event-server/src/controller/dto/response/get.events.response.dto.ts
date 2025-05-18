@@ -10,8 +10,22 @@ export class GetEventsResponseDTO {
   })
   events: GetEventResponseDto[];
 
-  constructor(
-    data: {
+  @ApiProperty({
+    description: '값이 더 있는지 여부',
+    example: true,
+  })
+  hasMore: boolean;
+
+  @ApiProperty({
+    description: '다음 커서 (ulid 값 base62 인코딩)',
+    example: 'Dkjfjsldkj1kvjaljas',
+  })
+  nextCursor: string | null;
+
+  constructor(data: {
+    hasMore: boolean;
+    nextCursor: string | null;
+    events: {
       rewards: {
         id: string;
         rewardName: string;
@@ -24,9 +38,11 @@ export class GetEventsResponseDTO {
       isActive: boolean;
       startDate: string;
       endDate: string;
-    }[],
-  ) {
-    this.events = data.map(
+    }[];
+  }) {
+    this.hasMore = data.hasMore;
+    this.nextCursor = data.nextCursor;
+    this.events = data.events.map(
       (event) =>
         new GetEventResponseDto({
           ...event,

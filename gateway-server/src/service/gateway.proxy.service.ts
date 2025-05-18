@@ -16,6 +16,7 @@ export class GatewayService {
       headers?: {
         [header: string]: string;
       };
+      params?: Record<string, any>;
     };
   }): Promise<T> {
     try {
@@ -25,6 +26,7 @@ export class GatewayService {
           url: args.url,
           data: args.options?.body,
           headers: args.options?.headers,
+          params: args.options?.params,
         }),
       );
       return response.data;

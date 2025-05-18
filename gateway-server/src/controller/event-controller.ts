@@ -6,6 +6,7 @@ import {
   Inject,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
@@ -39,11 +40,19 @@ export class EventController {
   }
 
   @Get()
-  async getEvents() {
+  async getEvents(
+    @Query('limit') limit: number,
+    @Query('cursor') cursor?: string,
+  ) {
     const data: Record<string, any> = await this.gatewayService.proxy({
       method: 'GET',
       url: `${this.config.EVENT_SERVER_URI}/events`,
-      options: {},
+      options: {
+        params: {
+          cursor,
+          limit,
+        },
+      },
     });
     return data;
   }

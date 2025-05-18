@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { EventService } from 'src/service/event.service';
 import { CreateEventRequestDTO } from './dto/request/create.event.request.dto';
 import { GetEventsResponseDTO } from './dto/response/get.events.response.dto';
@@ -28,8 +28,11 @@ export class EventController {
     summary: '이벤트 목록 조회',
   })
   @ApiCommonOkResponse(GetEventsResponseDTO)
-  async getEvents() {
-    const data = await this.eventService.getAllEvents();
+  async getEvents(
+    @Query('limit') limit: number = 10,
+    @Query('cursor') cursor?: string,
+  ) {
+    const data = await this.eventService.getAllEvents({ cursor, limit });
     const response = new GetEventsResponseDTO(data);
     return new CommonResponseDto<GetEventsResponseDTO>({
       data: response,

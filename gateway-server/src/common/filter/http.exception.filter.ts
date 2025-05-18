@@ -12,7 +12,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-
     // error 가 나더라도 항상 코드는 200
     const status = HttpStatus.OK;
 

@@ -37,8 +37,12 @@ export class EventRepository implements EventRepositoryInterface {
     return data.map((event) => this.toDomain(event));
   }
 
-  async getAll(): Promise<Event[]> {
-    const data = await this.eventModel.find().sort({ createdAt: -1 });
+  async getAll(args: { id?: string; limit: number }): Promise<Event[]> {
+    const query = args?.id ? { _id: { $lt: args.id } } : {};
+    const data = await this.eventModel
+      .find(query)
+      .sort({ _id: -1 })
+      .limit(args.limit + 1);
     return data.map((event) => this.toDomain(event));
   }
 

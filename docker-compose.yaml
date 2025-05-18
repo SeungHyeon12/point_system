@@ -38,7 +38,7 @@ services:
     environment:
       - MONGO_URI=mongodb://test:test@mongodb:27017
       - AUTH_SERVER_URI=http://auth-server:3000
-      - EVENT_SERVER_URI='http://event-server:3000
+      - EVENT_SERVER_URI=http://event-server:3000
     depends_on:
       - mongodb
       - auth-server

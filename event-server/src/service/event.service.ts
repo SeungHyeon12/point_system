@@ -13,6 +13,7 @@ import { EventCondition } from 'src/domain/vo/condition/event.condition';
 import { Event } from 'src/domain/event';
 import { EventConditionHelper } from './event.condition.helper';
 import { UserRewardResult } from 'src/domain/vo/reward/user.reward.result';
+import { decodeBase62 } from 'src/common/uitls/base62.decode.encode.function';
 
 @Injectable()
 export class EventService {
@@ -81,16 +82,30 @@ export class EventService {
     });
   }
 
-  async getAllEvents() {
-    const events = await this.eventRepository.getAll();
-    return events.map((event) => {
-      return {
-        ...event.getEventInfo(),
-        rewards: event
-          .getEventRewards()
-          .map((reward) => reward.getRewardInfo()),
-      };
-    });
+  async getAllEvents(args: { cursor?: string; limit: number }) {
+    const id = args?.cursor ? decodeBase62(args.cursor) : undefined;
+    const events = await this.eventRepository.getAll({ id, limit: args.limit });
+    const hasMore = events.length > args.limit;
+
+    const eventsWithinLimit = events.slice(0, args.limit);
+    const nextCursor = hasMore
+      ? decodeBase62(
+          eventsWithinLimit[eventsWithinLimit.length - 1].getEventInfo().id,
+        )
+      : null;
+
+    return {
+      nextCursor,
+      hasMore,
+      events: eventsWithinLimit.map((event) => {
+        return {
+          ...event.getEventInfo(),
+          rewards: event
+            .getEventRewards()
+            .map((reward) => reward.getRewardInfo()),
+        };
+      }),
+    };
   }
 
   async getEventById(args: { id: string }) {
