@@ -1,4 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { EventCondition } from '../domain/vo/condition/event.condition';
 import { DataRequester } from './interface/data.requester.interface';
 
@@ -24,18 +29,36 @@ export class EventConditionHelper {
   }
 
   private async validtateInviteThreeFriendsCondition(userId: string) {
-    const userData = await this.dataRequester.requestUserData(userId);
-    if (userData.recommenderCount < 3) {
-      return false;
+    try {
+      const userData = await this.dataRequester.requestUserData(userId);
+      if (userData.recommenderCount < 3) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'USER_NOT_FOUND') {
+          throw new NotFoundException('not found user');
+        }
+      }
+      throw new InternalServerErrorException('currently server unavailable');
     }
-    return true;
   }
 
   private async validateLoginSevenDaysCondition(userId: string) {
-    const userData = await this.dataRequester.requestUserData(userId);
-    if (userData.loginDays < 7) {
-      return false;
+    try {
+      const userData = await this.dataRequester.requestUserData(userId);
+      if (userData.loginDays < 7) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'USER_NOT_FOUND') {
+          throw new NotFoundException('not found user');
+        }
+      }
+      throw new InternalServerErrorException('currently server unavailable');
     }
-    return true;
   }
 }
