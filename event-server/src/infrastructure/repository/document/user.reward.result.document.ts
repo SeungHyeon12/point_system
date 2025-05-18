@@ -34,7 +34,7 @@ export class PartialRewardSnapshotSchema {
   @Prop({ type: String })
   rewardName: string;
 
-  @Prop({ type: Boolean })
+  @Prop({ type: String, enum: RewardType })
   rewardType: boolean;
 
   @Prop({ type: String })

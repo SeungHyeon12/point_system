@@ -113,6 +113,8 @@ export class UserRewardResult {
       },
       rewardsPartialSnapshot: [...this.rewardsPartialSnapshot],
       rewardReceivedAt: this.rewardReceivedAt ?? null,
+      isConditionCompleted: this.isConditionCompleted,
+      status: this.status,
     };
   }
 }

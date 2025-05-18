@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
 import { SignInRequestDTO } from 'src/controller/dto/request/sign.in.request.dto';
 import { SignUpRequestDTO } from 'src/controller/dto/request/sign.up.request.dto';
 import { SignInResponseDto } from 'src/controller/dto/response/sign.in.response.dto';
@@ -22,7 +22,7 @@ export class AuthController {
   })
   @ApiCommonOkResponse(GetUserInfoResponseDTO)
   @Get('user/:userId')
-  async getUserInfo(@Headers('userId') userId: string) {
+  async getUserInfo(@Param('userId') userId: string) {
     const data = await this.authService.getUserInfo({ userId });
     const response = new GetUserInfoResponseDTO(data);
     return new CommonResponseDto<GetUserInfoResponseDTO>({

@@ -1,7 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ConfigType } from '@nestjs/config';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
+import serverConfig from 'src/common/config/server.config';
 import {
   DataRequester,
   UserData,
@@ -9,20 +11,26 @@ import {
 
 @Injectable()
 export class HttpRequester implements DataRequester {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject(serverConfig.KEY)
+    private readonly config: ConfigType<typeof serverConfig>,
+  ) {}
 
   async requestUserData(userId: string): Promise<UserData> {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get<UserData>(`http://localhost:3000/auth/user/${userId}`)
+          .get<{
+            data: UserData;
+          }>(`${this.config.authServer}/auth/user/${userId}`)
           .pipe(
             catchError((error: AxiosError) => {
               throw error;
             }),
           ),
       );
-      return data;
+      return data.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 404) {

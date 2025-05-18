@@ -24,6 +24,7 @@ import {
   RequestRewardLogSchema,
 } from './repository/document/request.reward.log';
 import { UserRewardResultLogRepository } from './repository/user.reward.result.log.repository';
+import serverConfig from 'src/common/config/server.config';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { UserRewardResultLogRepository } from './repository/user.reward.result.l
       }),
     }),
     ConfigModule.forFeature(mongodbConfig),
+    ConfigModule.forFeature(serverConfig),
     MongooseModule.forFeature([
       {
         name: EventDocument.name,
