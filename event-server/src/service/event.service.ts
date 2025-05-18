@@ -41,7 +41,7 @@ export class EventService {
   async getRewardById(args: { id: string }) {
     const reward = await this.rewardRepository.getById(args.id);
     if (!reward) {
-      throw new Error('Reward not found');
+      throw new NotFoundException('Reward not found');
     }
     return reward.getRewardInfo();
   }
@@ -138,7 +138,7 @@ export class EventService {
       userRewardResult.rejectReward();
     }
 
-    await this.userRewardResultRpository.create(userRewardResult);
+    await this.userRewardResultRpository.update(userRewardResult);
   }
 
   async requestReward(args: { userId: string; eventId: string }) {

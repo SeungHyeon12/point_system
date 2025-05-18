@@ -47,19 +47,6 @@ export class RewardController {
     });
   }
 
-  @Get(':rewardId')
-  @ApiOperation({
-    summary: '보상 개별 조회',
-  })
-  @ApiCommonOkResponse(GetRewardResponseDtO)
-  async getReward(@Param('rewardId') rewardId: string) {
-    const reward = await this.eventService.getRewardById({ id: rewardId });
-    const response = new GetRewardResponseDtO(reward);
-    return new CommonResponseDto<GetRewardResponseDtO>({
-      data: response,
-    });
-  }
-
   @UseInterceptors(RequestRewardLogInterceptor)
   @Post('reward-requests')
   @ApiOperation({
@@ -101,6 +88,19 @@ export class RewardController {
     const data = await this.eventService.getUserOwnRewardResults({ userId });
     const response = new GetRewardRequestsResponseDTO(data);
     return new CommonResponseDto<GetRewardRequestsResponseDTO>({
+      data: response,
+    });
+  }
+
+  @Get(':rewardId')
+  @ApiOperation({
+    summary: '보상 개별 조회',
+  })
+  @ApiCommonOkResponse(GetRewardResponseDtO)
+  async getReward(@Param('rewardId') rewardId: string) {
+    const reward = await this.eventService.getRewardById({ id: rewardId });
+    const response = new GetRewardResponseDtO(reward);
+    return new CommonResponseDto<GetRewardResponseDtO>({
       data: response,
     });
   }

@@ -37,8 +37,8 @@ export class PartialRewardSnapshotSchema {
   @Prop({ type: String, enum: RewardType })
   rewardType: boolean;
 
-  @Prop({ type: String })
-  rewardAmount: string;
+  @Prop({ type: Number })
+  rewardAmount: number;
 }
 
 @Schema({ timestamps: true })
