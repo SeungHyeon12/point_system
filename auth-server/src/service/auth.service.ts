@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/domain/user';
 import { UserRole } from 'src/domain/vo/user.role';
-import { ScopeValues } from 'src/domain/vo/user.role.scope.helper';
 import { UserRepositoryInterface } from 'src/service/interface/user.repository.interface';
 
 export type AuthTokenType =
@@ -89,7 +88,6 @@ export class AuthService {
       {
         sub: user.getId(),
         role: user.getRole(),
-        scope: [...user.getAvailableScopes()],
         type: 'access',
       },
       {
@@ -131,14 +129,9 @@ export class AuthService {
         throw new UnauthorizedException('invalid token');
       }
 
-      if (!user.isScopesCorrect(payload.scope)) {
-        throw new UnauthorizedException('invalid token');
-      }
-
       return {
         sub: payload.sub,
         active: true,
-        scope: payload.scope as ScopeValues[],
         exp: payload?.exp,
       };
     } else if (payload.type == 'refresh') {
@@ -180,7 +173,6 @@ export class AuthService {
       {
         sub: user.getId(),
         role: user.getRole(),
-        scope: [...user.getAvailableScopes()],
         type: 'access',
       },
       {

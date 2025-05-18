@@ -5,10 +5,6 @@ import {
 } from 'src/common/uitls/hashpassword.function';
 import { isDifferentDay } from 'src/common/uitls/is.diffrent.day.function';
 import { UserRole } from 'src/domain/vo/user.role';
-import {
-  ScopeValues,
-  UserRoleScopeHelper,
-} from 'src/domain/vo/user.role.scope.helper';
 
 export class User {
   private readonly id: string;
@@ -57,17 +53,6 @@ export class User {
 
   async isVerifiedPassword(requestPassword: string) {
     return await verifyPassword(requestPassword, this.password);
-  }
-
-  getAvailableScopes() {
-    return UserRoleScopeHelper.getScopeByRole(this.userRole);
-  }
-
-  isScopesCorrect(scopes: string[]) {
-    const availableScopes = this.getAvailableScopes();
-    return scopes.every((scope) =>
-      availableScopes.includes(scope as ScopeValues),
-    );
   }
 
   signIn() {
