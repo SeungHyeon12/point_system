@@ -174,4 +174,13 @@ export class EventService {
       throw err;
     }
   }
+
+  async getRequests() {
+    const requests = await this.userRewardResultRpository.getAll();
+    return requests.map((request) => {
+      return {
+        ...request.getInfo(),
+      };
+    });
+  }
 }

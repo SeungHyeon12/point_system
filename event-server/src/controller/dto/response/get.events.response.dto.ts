@@ -1,11 +1,8 @@
-import { IsArray, ValidateNested } from 'class-validator';
 import { RewardType } from 'src/domain/vo/reward/reward.type';
 import { GetEventResponseDto } from './get.event.response.dto';
 import { EventCondition } from 'src/domain/vo/condition/event.condition';
 
 export class GetEventsResponseDTO {
-  @IsArray()
-  @ValidateNested({ each: true })
   events: GetEventResponseDto[];
 
   constructor(

@@ -7,6 +7,7 @@ import { CreateEventRequestDTO } from './dto/request/create.event.request.dto';
 import { GetEventsResponseDTO } from './dto/response/get.events.response.dto';
 import { GetEventResponseDto } from './dto/response/get.event.response.dto';
 import { RequestRewardsDTO } from './dto/request/request.rewards.dto';
+import { GetRewardRequestsResponseDTO } from './dto/response/get.reward.requests.response.dto';
 
 @Controller('events')
 export class EventController {
@@ -25,16 +26,21 @@ export class EventController {
     return new GetRewardsResponseDTO(rewards);
   }
 
+  @Post('reward-requests')
+  async requestReward(@Body() requestRewardsDTO: RequestRewardsDTO) {
+    await this.eventService.requestReward(requestRewardsDTO);
+  }
+
+  @Get('reward-requests')
+  async getRewardRequests() {
+    const data = await this.eventService.getAllUserRewardResults();
+    return new GetRewardRequestsResponseDTO(data);
+  }
+
   @Get('rewards/:rewardId')
   async getReward(@Param('rewardId') rewardId: string) {
     const reward = await this.eventService.getRewardById({ id: rewardId });
     return new GetRewardResponseDtO(reward);
-  }
-
-  @Post('rewards/request')
-  async requestReward(@Body() requestRewardsDTO: RequestRewardsDTO) {
-    const result = await this.eventService.requestReward(requestRewardsDTO);
-    return result;
   }
 
   @Post()

@@ -1,22 +1,9 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-
 export class GetUserInfoResponseDTO {
-  @IsString()
   email: string;
-
-  @IsString()
   userRole: string;
-
-  @IsOptional()
   recommenderId?: string;
-
-  @IsOptional()
   lastLoginDate?: string;
-
-  @IsNumber()
   loginDays: number;
-
-  @IsNumber()
   recommenderCount: number;
 
   constructor(args: {

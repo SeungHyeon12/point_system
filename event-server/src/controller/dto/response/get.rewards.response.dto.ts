@@ -1,10 +1,7 @@
-import { IsArray, ValidateNested } from 'class-validator';
 import { GetRewardResponseDtO } from './get.reward.response.dto';
 import { RewardType } from 'src/domain/vo/reward/reward.type';
 
 export class GetRewardsResponseDTO {
-  @IsArray()
-  @ValidateNested({ each: true })
   rewards: GetRewardResponseDtO[];
 
   constructor(

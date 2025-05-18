@@ -1,13 +1,6 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
-
 export class TokenIntrospectResponseDTO {
-  @IsString()
   sub: string;
-
-  @IsBoolean()
   active: boolean;
-
-  @IsNumber()
   exp: number;
 
   constructor(args: { sub: string; active: boolean; exp: number }) {
