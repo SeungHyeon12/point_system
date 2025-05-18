@@ -122,7 +122,7 @@ export class EventService {
 
   async reviewRewardResult(args: {
     rewardResultId: string;
-    action: 'APPROVE' | 'REJECT';
+    status: 'APPROVE' | 'REJECT';
   }) {
     const userRewardResult = await this.userRewardResultRpository.getById(
       args.rewardResultId,
@@ -132,9 +132,9 @@ export class EventService {
       throw new NotFoundException('User reward result not found');
     }
 
-    if (args.action === 'APPROVE') {
+    if (args.status === 'APPROVE') {
       userRewardResult.approveReward();
-    } else if (args.action === 'REJECT') {
+    } else if (args.status === 'REJECT') {
       userRewardResult.rejectReward();
     }
 
