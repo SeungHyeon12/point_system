@@ -19,7 +19,7 @@ export class RewardPartialSchema {
   rewardAmount: number;
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'events' })
 export class EventDocument extends BaseSchema {
   @Prop({ required: true, type: String })
   _id: string;

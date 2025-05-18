@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'request_reward_logs' })
 export class RequestRewardLogDocument {
   @Prop({ required: true, type: String })
   _id: string;

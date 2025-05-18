@@ -203,7 +203,6 @@ export class AuthService {
   }
 
   async getUserInfo(args: { userId: string }) {
-    console.log('getUserInfo', args.userId);
     const user = await this.userRepository.getUserById(args.userId);
 
     if (!user) {

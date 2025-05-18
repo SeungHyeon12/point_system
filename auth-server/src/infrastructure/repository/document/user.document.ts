@@ -7,7 +7,7 @@ interface UserSchemaMethod {
   toEntity(): User;
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'users' })
 export class UserDocument {
   @Prop({
     required: true,

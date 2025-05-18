@@ -41,7 +41,7 @@ export class PartialRewardSnapshotSchema {
   rewardAmount: number;
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'user_reward_results' })
 export class UserRewardResultDocument extends BaseSchema {
   @Prop({ required: true })
   _id: string;

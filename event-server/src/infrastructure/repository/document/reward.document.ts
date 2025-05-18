@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 import { RewardType } from 'src/domain/vo/reward/reward.type';
 import { BaseSchema } from '../../../common/schema/base.schema';
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'rewards' })
 export class RewardDocument extends BaseSchema {
   @Prop({ required: true, type: String })
   _id: string;
