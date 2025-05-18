@@ -53,6 +53,11 @@ export class AuthService {
       }
     }
 
+    const existingUser = await this.userRepository.getUserByEmail(args.email);
+    if (existingUser) {
+      throw new BadRequestException('email already exists');
+    }
+
     const newUser = await User.createUser({
       email: args.email,
       rawPassword: args.rawPassword,
@@ -68,6 +73,11 @@ export class AuthService {
     rawPassword: string;
     role: Exclude<UserRole, 'USER'>;
   }) {
+    const existingUser = await this.userRepository.getUserByEmail(args.email);
+    if (existingUser) {
+      throw new BadRequestException('email already exists');
+    }
+
     const newUser = await User.createUser({
       email: args.email,
       rawPassword: args.rawPassword,
