@@ -1,15 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Reward } from 'src/domain/vo/reward/reward';
 import { RewardType } from 'src/domain/vo/reward/reward.type';
 import { BaseSchema } from '../../../common/schema/base.schema';
-import { BaseSchemaMethod } from 'src/common/schema/base.schema.method.interface';
 
 @Schema({ timestamps: true })
-export class RewardDocument
-  extends BaseSchema
-  implements BaseSchemaMethod<Reward>
-{
+export class RewardDocument extends BaseSchema {
   @Prop({ required: true, type: String })
   _id: string;
 
@@ -21,19 +16,7 @@ export class RewardDocument
 
   @Prop({ required: true, type: Number })
   rewardAmount: number;
-
-  toDomain(): Reward {
-    return new Reward({
-      id: this._id,
-      rewardName: this.rewardName,
-      rewardType: this.rewardType,
-      rewardAmount: this.rewardAmount,
-    });
-  }
 }
 
-export type RewardSchema = HydratedDocument<
-  RewardDocument,
-  BaseSchemaMethod<Reward>
->;
+export type RewardSchema = HydratedDocument<RewardDocument>;
 export const RewardSchema = SchemaFactory.createForClass(RewardDocument);

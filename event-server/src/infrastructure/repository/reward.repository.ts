@@ -13,19 +13,20 @@ export class RewardRepository implements RewardRepositoryInterface {
   ) {}
 
   async create(reward: Reward): Promise<void> {
-    await this.rewardModel.create({ ...reward.getRewardInfo() });
+    const data = reward.getRewardInfo();
+    await this.rewardModel.create({ ...data, _id: data.id });
   }
 
   async getById(id: string): Promise<Reward | null> {
     const data = await this.rewardModel.findById(id);
-    return data ? data.toDomain() : null;
+    return data ? this.toDomain(data) : null;
   }
 
   async getAll(): Promise<Reward[]> {
     const data = await this.rewardModel
       .find({ deletedAt: null })
       .sort({ createdAt: -1 });
-    return data.map((reward) => reward.toDomain());
+    return data.map((reward) => this.toDomain(reward));
   }
 
   async getAllByIds(ids: string[]): Promise<Reward[]> {
@@ -33,6 +34,15 @@ export class RewardRepository implements RewardRepositoryInterface {
       _id: { $in: ids },
       deletedAt: null,
     });
-    return data.map((reward) => reward.toDomain());
+    return data.map((reward) => this.toDomain(reward));
+  }
+
+  toDomain(rewardSchema: RewardSchema): Reward {
+    return new Reward({
+      id: rewardSchema._id,
+      rewardName: rewardSchema.rewardName,
+      rewardType: rewardSchema.rewardType,
+      rewardAmount: rewardSchema.rewardAmount,
+    });
   }
 }

@@ -1,18 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Event } from 'src/domain/event';
 import { EventCondition } from 'src/domain/vo/condition/event.condition';
-import { RewardSchema } from './reward.document';
 import { RewardType } from 'src/domain/vo/reward/reward.type';
-import { Reward } from 'src/domain/vo/reward/reward';
-import { BaseSchema } from '../../../common/schema/base.schema';
-import { BaseSchemaMethod } from 'src/common/schema/base.schema.method.interface';
+import { BaseSchema } from 'src/common/schema/base.schema';
+
+@Schema({ _id: false, timestamps: false })
+export class RewardPartialSchema {
+  @Prop({ required: true, type: String })
+  _id: string;
+
+  @Prop({ required: true, type: String })
+  rewardName: string;
+
+  @Prop({ required: true, enum: RewardType, type: String })
+  rewardType: RewardType;
+
+  @Prop({ required: true, type: Number })
+  rewardAmount: number;
+}
 
 @Schema({ timestamps: true })
-export class EventDocument
-  extends BaseSchema
-  implements BaseSchemaMethod<Event>
-{
+export class EventDocument extends BaseSchema {
   @Prop({ required: true, type: String })
   _id: string;
 
@@ -25,9 +33,9 @@ export class EventDocument
   @Prop({ required: true, type: Boolean })
   isActive: boolean;
 
-  @Prop({ required: true, type: [RewardSchema] })
+  @Prop({ required: true, type: [RewardPartialSchema] })
   rewards: {
-    id: string;
+    _id: string;
     rewardName: string;
     rewardType: RewardType;
     rewardAmount: number;
@@ -38,30 +46,7 @@ export class EventDocument
 
   @Prop({ required: true, type: String })
   endDate: string;
-
-  toDomain(): Event {
-    return new Event({
-      id: this._id,
-      eventName: this.eventName,
-      eventCondition: this.eventCondition,
-      isActive: this.isActive,
-      rewards: this.rewards.map(
-        (reward) =>
-          new Reward({
-            id: reward.id,
-            rewardName: reward.rewardName,
-            rewardType: reward.rewardType,
-            rewardAmount: reward.rewardAmount,
-          }),
-      ),
-      startDate: this.startDate,
-      endDate: this.endDate,
-    });
-  }
 }
 
-export type EventSchema = HydratedDocument<
-  EventDocument,
-  BaseSchemaMethod<Event>
->;
+export type EventSchema = HydratedDocument<EventDocument>;
 export const EventSchema = SchemaFactory.createForClass(EventDocument);

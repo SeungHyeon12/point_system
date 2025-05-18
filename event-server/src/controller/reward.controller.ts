@@ -23,7 +23,7 @@ import { RequestRewardLogInterceptor } from 'src/common/interceptor/request.rewa
 export class RewardController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post('')
+  @Post()
   @ApiOperation({
     summary: '보상 생성',
   })
@@ -34,7 +34,7 @@ export class RewardController {
     return new CommonResponseDto<null>({ data: null });
   }
 
-  @Get('')
+  @Get()
   @ApiOperation({
     summary: '보상 목록 조회',
   })
@@ -43,6 +43,19 @@ export class RewardController {
     const rewards = await this.eventService.getAllRewards();
     const response = new GetRewardsResponseDTO(rewards);
     return new CommonResponseDto<GetRewardsResponseDTO>({
+      data: response,
+    });
+  }
+
+  @Get(':rewardId')
+  @ApiOperation({
+    summary: '보상 개별 조회',
+  })
+  @ApiCommonOkResponse(GetRewardResponseDtO)
+  async getReward(@Param('rewardId') rewardId: string) {
+    const reward = await this.eventService.getRewardById({ id: rewardId });
+    const response = new GetRewardResponseDtO(reward);
+    return new CommonResponseDto<GetRewardResponseDtO>({
       data: response,
     });
   }
@@ -88,19 +101,6 @@ export class RewardController {
     const data = await this.eventService.getUserOwnRewardResults({ userId });
     const response = new GetRewardRequestsResponseDTO(data);
     return new CommonResponseDto<GetRewardRequestsResponseDTO>({
-      data: response,
-    });
-  }
-
-  @Get('rewards/:rewardId')
-  @ApiOperation({
-    summary: '보상 개별 조회',
-  })
-  @ApiCommonOkResponse(GetRewardResponseDtO)
-  async getReward(@Param('rewardId') rewardId: string) {
-    const reward = await this.eventService.getRewardById({ id: rewardId });
-    const response = new GetRewardResponseDtO(reward);
-    return new CommonResponseDto<GetRewardResponseDtO>({
       data: response,
     });
   }

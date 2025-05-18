@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { EventDocument, EventSchema } from './document/event.document';
 import { Event } from 'src/domain/event';
 import { EventRepositoryInterface } from 'src/service/interface/event.repository.interface';
+import { Reward } from 'src/domain/vo/reward/reward';
 
 @Injectable()
 export class EventRepository implements EventRepositoryInterface {
@@ -13,31 +14,51 @@ export class EventRepository implements EventRepositoryInterface {
   ) {}
 
   async create(event: Event): Promise<void> {
-    try {
-      await this.eventModel.create({ ...event.save() });
-    } catch (err: unknown) {
-      const mongoDbError = err as { code: number };
-      if (mongoDbError?.code === 11000) {
-        throw new Error('ALREADY_EXIST');
-      }
-      throw err;
-    }
+    const data = event.save();
+    await this.eventModel.create({
+      ...data,
+      _id: data.id,
+      rewards: data.rewards.map((reward) => ({
+        ...reward,
+        _id: reward.id,
+      })),
+    });
   }
 
   async getById(id: string): Promise<Event | null> {
     const data = await this.eventModel.findById(id);
-    return data ? data.toDomain() : null;
+    return data ? this.toDomain(data) : null;
   }
 
   async getAllWithoutDeleted(): Promise<Event[]> {
     const data = await this.eventModel
       .find({ deletedAt: null })
       .sort({ createdAt: -1 });
-    return data.map((event) => event.toDomain());
+    return data.map((event) => this.toDomain(event));
   }
 
   async getAll(): Promise<Event[]> {
     const data = await this.eventModel.find().sort({ createdAt: -1 });
-    return data.map((event) => event.toDomain());
+    return data.map((event) => this.toDomain(event));
+  }
+
+  toDomain(eventSchema: EventSchema): Event {
+    return new Event({
+      id: eventSchema._id,
+      eventName: eventSchema.eventName,
+      eventCondition: eventSchema.eventCondition,
+      isActive: eventSchema.isActive,
+      rewards: eventSchema.rewards.map(
+        (reward) =>
+          new Reward({
+            id: reward._id,
+            rewardName: reward.rewardName,
+            rewardType: reward.rewardType,
+            rewardAmount: reward.rewardAmount,
+          }),
+      ),
+      startDate: eventSchema.startDate,
+      endDate: eventSchema.endDate,
+    });
   }
 }

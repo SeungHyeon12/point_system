@@ -21,6 +21,9 @@ export class RequestRewardLogDocument {
   @Prop()
   errorMessage?: string;
 
+  @Prop({ required: true, type: String })
+  traceId: string;
+
   createdAt: string;
 }
 

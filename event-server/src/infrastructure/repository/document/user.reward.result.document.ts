@@ -2,15 +2,13 @@ import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { RewardType } from 'src/domain/vo/reward/reward.type';
 import { UserRewardResultStatus } from 'src/domain/vo/reward/user.reward.result.status';
 import { BaseSchema } from '../../../common/schema/base.schema';
-import { BaseSchemaMethod } from 'src/common/schema/base.schema.method.interface';
-import { UserRewardResult } from 'src/domain/vo/reward/user.reward.result';
 import { EventCondition } from 'src/domain/vo/condition/event.condition';
 import { HydratedDocument } from 'mongoose';
 
-@Schema({ _id: false, timestamps: false })
+@Schema({ timestamps: false })
 export class PartialEventSnapshotSchema {
   @Prop({ required: true, type: String })
-  id: string;
+  _id: string;
 
   @Prop({ type: String })
   eventName: string;
@@ -28,10 +26,10 @@ export class PartialEventSnapshotSchema {
   endDate: string;
 }
 
-@Schema({ _id: false, timestamps: false })
+@Schema({ timestamps: false })
 export class PartialRewardSnapshotSchema {
   @Prop({ required: true, type: String })
-  id: string;
+  _id: string;
 
   @Prop({ type: String })
   rewardName: string;
@@ -44,10 +42,7 @@ export class PartialRewardSnapshotSchema {
 }
 
 @Schema({ timestamps: true })
-export class UserRewardResultDocument
-  extends BaseSchema
-  implements BaseSchemaMethod<UserRewardResult>
-{
+export class UserRewardResultDocument extends BaseSchema {
   @Prop({ required: true })
   _id: string;
 
@@ -59,7 +54,7 @@ export class UserRewardResultDocument
 
   @Prop({ type: PartialEventSnapshotSchema, required: true })
   eventPartialSnapshot: {
-    id: string;
+    _id: string;
     eventName: string;
     eventCondition: EventCondition;
     isActive: boolean;
@@ -69,7 +64,7 @@ export class UserRewardResultDocument
 
   @Prop({ type: [PartialRewardSnapshotSchema], required: true })
   rewardsPartialSnaopshot: {
-    id: string;
+    _id: string;
     rewardName: string;
     rewardType: RewardType;
     rewardAmount: number;
@@ -83,37 +78,9 @@ export class UserRewardResultDocument
 
   @Prop({ type: String, required: false, default: null })
   rewardReceivedAt: string | null;
-
-  toDomain(): UserRewardResult {
-    return new UserRewardResult({
-      id: this._id,
-      userId: this.userId,
-      eventId: this.eventId,
-      eventPartialInfo: {
-        id: this.eventPartialSnapshot.id,
-        eventName: this.eventPartialSnapshot.eventName,
-        isActive: this.eventPartialSnapshot.isActive,
-        eventCondition: this.eventPartialSnapshot.eventCondition,
-        startDate: this.eventPartialSnapshot.startDate,
-        endDate: this.eventPartialSnapshot.endDate,
-      },
-      rewardsPartialInfo: this.rewardsPartialSnaopshot.map((reward) => ({
-        id: reward.id,
-        rewardName: reward.rewardName,
-        rewardType: reward.rewardType,
-        rewardAmount: reward.rewardAmount,
-      })),
-      status: this.status,
-      isConditionCompleted: this.isConditionCompleted,
-      rewardReceivedAt: this.rewardReceivedAt,
-    });
-  }
 }
 
-export type UserRewardResultSchema = HydratedDocument<
-  UserRewardResultDocument,
-  BaseSchemaMethod<UserRewardResult>
->;
+export type UserRewardResultSchema = HydratedDocument<UserRewardResultDocument>;
 export const UserRewardResultSchema = SchemaFactory.createForClass(
   UserRewardResultDocument,
 );

@@ -15,12 +15,13 @@ export class UserRewardResultLogRepository implements RequestLoggerRepository {
   ) {}
 
   async create(args: {
+    id: string;
     userId: string;
     eventId: any;
     requestType: 'REQUEST' | 'RESPONSE';
     status: 'STARTED' | 'COMPLETED' | 'FAILED';
     errorMessage?: string;
   }): Promise<void> {
-    await this.userRewardResultModel.create({ ...args });
+    await this.userRewardResultModel.create({ ...args, _id: args.id });
   }
 }
