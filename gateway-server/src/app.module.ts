@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import serverConfig from './common/config/server.config';
 import { EventController } from './controller/event-controller';
 import { AuthController } from './controller/auth-controller';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/filter/http.exception.filter';
 
 @Module({
   imports: [
@@ -20,6 +22,12 @@ import { AuthController } from './controller/auth-controller';
     }),
   ],
   controllers: [EventController, AuthController],
-  providers: [GatewayService],
+  providers: [
+    GatewayService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
