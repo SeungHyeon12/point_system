@@ -16,12 +16,12 @@ export class UserRewardResult {
     startDate: string;
     endDate: string;
   };
-  rewardPartialSnapshot: {
+  rewardsPartialSnapshot: {
     id: string;
     rewardName: string;
     rewardType: RewardType;
     rewardAmount: number;
-  };
+  }[];
   status: UserRewardResultStatus;
   isConditionCompleted: boolean;
   rewardReceivedAt: string | null;
@@ -40,12 +40,12 @@ export class UserRewardResult {
       startDate: string;
       endDate: string;
     };
-    rewardPartialInfo: {
+    rewardsPartialInfo: {
       id: string;
       rewardName: string;
       rewardType: RewardType;
       rewardAmount: number;
-    };
+    }[];
     rewardReceivedAt: string | null;
   }) {
     this.id = args.id;
@@ -54,7 +54,7 @@ export class UserRewardResult {
     this.status = args.status;
     this.isConditionCompleted = args.isConditionCompleted;
     this.eventPartialSnapshot = args.eventPartialInfo;
-    this.rewardPartialSnapshot = args.rewardPartialInfo;
+    this.rewardsPartialSnapshot = args.rewardsPartialInfo;
     this.rewardReceivedAt = args.rewardReceivedAt;
   }
 
@@ -66,7 +66,9 @@ export class UserRewardResult {
       eventPartialInfo: args.event.getEventInfo(),
       status: UserRewardResultStatus.RECEIVED,
       isConditionCompleted: true,
-      rewardPartialInfo: args.event.getEventReward().getRewardInfo(),
+      rewardsPartialInfo: args.event
+        .getEventRewards()
+        .map((reward) => reward.getRewardInfo()),
       rewardReceivedAt: new Date().toISOString(),
     });
   }
@@ -85,7 +87,9 @@ export class UserRewardResult {
       eventPartialInfo: event.getEventInfo(),
       status: UserRewardResultStatus.REVIEW,
       isConditionCompleted: true,
-      rewardPartialInfo: event.getEventReward().getRewardInfo(),
+      rewardsPartialInfo: event
+        .getEventRewards()
+        .map((reward) => reward.getRewardInfo()),
       rewardReceivedAt: null,
     });
   }
@@ -107,9 +111,7 @@ export class UserRewardResult {
       eventPartialSnapshot: {
         ...this.eventPartialSnapshot,
       },
-      reward: {
-        ...this.rewardPartialSnapshot,
-      },
+      rewards: [...this.rewardsPartialSnapshot],
       rewardReceivedAt: this.rewardReceivedAt ?? null,
     };
   }

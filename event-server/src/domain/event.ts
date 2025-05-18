@@ -7,7 +7,7 @@ export class Event {
   private eventName: string;
   private eventCondition: EventCondition;
   private isActive: boolean;
-  private reward: Reward;
+  private rewards: Reward[];
   private startDate: string;
   private endDate: string;
 
@@ -16,7 +16,7 @@ export class Event {
     eventName: string;
     eventCondition: EventCondition;
     isActive: boolean;
-    reward: Reward;
+    rewards: Reward[];
     startDate: string;
     endDate: string;
   }) {
@@ -24,7 +24,7 @@ export class Event {
     this.eventName = args.eventName;
     this.eventCondition = args.eventCondition;
     this.isActive = args.isActive;
-    this.reward = args.reward;
+    this.rewards = args.rewards;
     this.startDate = args.startDate;
     this.endDate = args.endDate;
   }
@@ -32,7 +32,7 @@ export class Event {
   static createEvent(args: {
     eventName: string;
     eventCondition: EventCondition;
-    reward: Reward;
+    rewards: Reward[];
     startDate: string;
     endDate: string;
   }) {
@@ -42,7 +42,7 @@ export class Event {
       eventCondition: args.eventCondition,
       // 혹시라도 event 를 바로 노출시키고 싶지 않을 수 있으므로 active를 통해서 킬 수 있도록 한다.
       isActive: false,
-      reward: args.reward,
+      rewards: args.rewards,
       startDate: args.startDate,
       endDate: args.endDate,
     });
@@ -61,8 +61,8 @@ export class Event {
     return this.eventCondition === EventCondition.LOTTERY;
   }
 
-  getEventReward() {
-    return this.reward;
+  getEventRewards() {
+    return this.rewards;
   }
 
   getEventCondition() {
@@ -73,13 +73,13 @@ export class Event {
   updateEvent(args: {
     eventName: string;
     eventCondition: EventCondition;
-    reward: Reward;
+    rewards: Reward[];
     startDate: string;
     endDate: string;
   }) {
     this.eventName = args.eventName;
     this.eventCondition = args.eventCondition;
-    this.reward = args.reward;
+    this.rewards = args.rewards;
     this.startDate = args.startDate;
     this.endDate = args.endDate;
   }
@@ -90,25 +90,21 @@ export class Event {
       eventName: this.eventName,
       eventCondition: this.eventCondition,
       isActive: this.isActive,
-      reward: this.reward,
+      rewards: this.rewards,
       startDate: this.startDate,
       endDate: this.endDate,
     };
   }
 
   save() {
-    const rewardInfo = this.reward.getRewardInfo();
     return {
       id: this.id,
       eventName: this.eventName,
       eventCondition: this.eventCondition,
       isActive: this.isActive,
-      reward: {
-        id: rewardInfo.id,
-        rewardName: rewardInfo.rewardName,
-        rewardType: rewardInfo.rewardType,
-        rewardAmount: rewardInfo.rewardAmount,
-      },
+      rewards: this.rewards.map((reward) => ({
+        ...reward.getRewardInfo(),
+      })),
       startDate: this.startDate,
       endDate: this.endDate,
     };

@@ -25,13 +25,13 @@ export class EventDocument
   @Prop({ required: true, type: Boolean })
   isActive: boolean;
 
-  @Prop({ required: true, type: RewardSchema })
-  reward: {
+  @Prop({ required: true, type: [RewardSchema] })
+  rewards: {
     id: string;
     rewardName: string;
     rewardType: RewardType;
     rewardAmount: number;
-  };
+  }[];
 
   @Prop({ required: true, type: String })
   startDate: string;
@@ -45,12 +45,15 @@ export class EventDocument
       eventName: this.eventName,
       eventCondition: this.eventCondition,
       isActive: this.isActive,
-      reward: new Reward({
-        id: this.reward.id,
-        rewardName: this.reward.rewardName,
-        rewardType: this.reward.rewardType,
-        rewardAmount: this.reward.rewardAmount,
-      }),
+      rewards: this.rewards.map(
+        (reward) =>
+          new Reward({
+            id: reward.id,
+            rewardName: reward.rewardName,
+            rewardType: reward.rewardType,
+            rewardAmount: reward.rewardAmount,
+          }),
+      ),
       startDate: this.startDate,
       endDate: this.endDate,
     });

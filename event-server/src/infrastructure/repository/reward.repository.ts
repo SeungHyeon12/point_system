@@ -11,6 +11,7 @@ export class RewardRepository implements RewardRepositoryInterface {
     @InjectModel(RewardDocument.name)
     private readonly rewardModel: Model<RewardSchema>,
   ) {}
+
   async create(reward: Reward): Promise<void> {
     await this.rewardModel.create({ ...reward.getRewardInfo() });
   }
@@ -24,6 +25,14 @@ export class RewardRepository implements RewardRepositoryInterface {
     const data = await this.rewardModel
       .find({ deletedAt: null })
       .sort({ createdAt: -1 });
+    return data.map((reward) => reward.toDomain());
+  }
+
+  async getAllByIds(ids: string[]): Promise<Reward[]> {
+    const data = await this.rewardModel.find({
+      _id: { $in: ids },
+      deletedAt: null,
+    });
     return data.map((reward) => reward.toDomain());
   }
 }

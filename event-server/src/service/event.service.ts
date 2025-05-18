@@ -51,28 +51,29 @@ export class EventService {
     return rewards.map((reward) => reward.getRewardInfo());
   }
 
+  ///events
   async createEvent(args: {
     eventName: string;
     eventCondition: EventCondition;
     startDate: string;
     endDate: string;
-    rewardId: string;
+    rewardIds: string[];
   }) {
-    const reward = await this.rewardRepository.getById(args.rewardId);
-    if (!reward) {
+    const rewards = await this.rewardRepository.getAllByIds(args.rewardIds);
+    if (rewards.length === 0) {
       throw new NotFoundException('Reward not found');
     }
+
     const event = Event.createEvent({
       eventName: args.eventName,
       eventCondition: args.eventCondition,
-      reward,
+      rewards,
       startDate: args.startDate,
       endDate: args.endDate,
     });
     await this.eventRepository.create(event);
   }
 
-  ///events
   async getEvents() {
     const events = await this.eventRepository.getAllWithoutDeleted();
     return events.map((event) => {
@@ -83,7 +84,12 @@ export class EventService {
   async getAllEvents() {
     const events = await this.eventRepository.getAll();
     return events.map((event) => {
-      return event.getEventInfo();
+      return {
+        ...event.getEventInfo(),
+        rewards: event
+          .getEventRewards()
+          .map((reward) => reward.getRewardInfo()),
+      };
     });
   }
 
@@ -92,7 +98,10 @@ export class EventService {
     if (!event) {
       throw new NotFoundException('Event not found');
     }
-    return event.getEventInfo();
+    return {
+      ...event.getEventInfo(),
+      rewards: event.getEventRewards().map((reward) => reward.getRewardInfo()),
+    };
   }
 
   ///user reward result

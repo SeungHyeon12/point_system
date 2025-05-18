@@ -4,4 +4,5 @@ export interface RewardRepositoryInterface {
   create(reward: Reward): Promise<void>;
   getById(id: string): Promise<Reward | null>;
   getAll(): Promise<Reward[]>;
+  getAllByIds(ids: string[]): Promise<Reward[]>;
 }
