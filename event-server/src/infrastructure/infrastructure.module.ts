@@ -19,6 +19,11 @@ import { RewardRepository } from './repository/reward.repository';
 import { UserRewardResultRepository } from './repository/user.reward.result.repository';
 import { HttpModule } from '@nestjs/axios';
 import { HttpRequester } from './dataRequest/http.requester';
+import {
+  RequestRewardLogDocument,
+  RequestRewardLogSchema,
+} from './repository/document/request.reward.log';
+import { UserRewardResultLogRepository } from './repository/user.reward.result.log.repository';
 
 @Module({
   imports: [
@@ -42,6 +47,10 @@ import { HttpRequester } from './dataRequest/http.requester';
         name: UserRewardResultDocument.name,
         schema: UserRewardResultSchema,
       },
+      {
+        name: RequestRewardLogDocument.name,
+        schema: RequestRewardLogSchema,
+      },
     ]),
   ],
   providers: [
@@ -61,12 +70,17 @@ import { HttpRequester } from './dataRequest/http.requester';
       provide: 'DATA_REQUESTER',
       useClass: HttpRequester,
     },
+    {
+      provide: 'USER_REWARD_RESULT_LOG_REPOSITORY',
+      useClass: UserRewardResultLogRepository,
+    },
   ],
   exports: [
     'EVENT_REPOSITORY',
     'REWARD_REPOSITORY',
     'USER_REWARD_RESULT_REPOSITORY',
     'DATA_REQUESTER',
+    'USER_REWARD_RESULT_LOG_REPOSITORY',
   ],
 })
 export class InfrastructureModule {}

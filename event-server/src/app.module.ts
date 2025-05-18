@@ -7,6 +7,7 @@ import { EventController } from './controller/event.controller';
 import { EventService } from './service/event.service';
 import { EventConditionHelper } from './service/event.condition.helper';
 import { RewardController } from './controller/reward.controller';
+import { RequestRewardLogInterceptor } from './common/interceptor/request.reward.log.interceptor';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { RewardController } from './controller/reward.controller';
     }),
   ],
   controllers: [EventController, RewardController],
-  providers: [EventService, EventConditionHelper],
+  providers: [EventService, EventConditionHelper, RequestRewardLogInterceptor],
 })
 export class AppModule {}

@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { EventService } from 'src/service/event.service';
 import { CreateRewardRequestDTO } from './dto/request/create.reward.request.dto';
 import { GetRewardsResponseDTO } from './dto/response/get.rewards.response.dto';
@@ -9,6 +16,7 @@ import { ReviewRewardRequestDTO } from './dto/request/review.reward.request.dto'
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiCommonOkResponse } from 'src/common/response/common.response.decorator';
 import { CommonResponseDto } from 'src/common/response/common.response.dto';
+import { RequestRewardLogInterceptor } from 'src/common/interceptor/request.reward.log.interceptor';
 
 @ApiTags('Rewards')
 @Controller('rewards')
@@ -39,6 +47,7 @@ export class RewardController {
     });
   }
 
+  @UseInterceptors(RequestRewardLogInterceptor)
   @Post('reward-requests')
   @ApiOperation({
     summary: '보상 요청',
