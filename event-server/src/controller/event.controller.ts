@@ -3,7 +3,7 @@ import { EventService } from 'src/service/event.service';
 import { CreateEventRequestDTO } from './dto/request/create.event.request.dto';
 import { GetEventsResponseDTO } from './dto/response/get.events.response.dto';
 import { GetEventResponseDto } from './dto/response/get.event.response.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiCommonOkResponse } from 'src/common/response/common.response.decorator';
 import { CommonResponseDto } from 'src/common/response/common.response.dto';
 
@@ -26,6 +26,18 @@ export class EventController {
   @Get()
   @ApiOperation({
     summary: '이벤트 목록 조회',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: '페이지네이션 갯수제한',
+  })
+  @ApiQuery({
+    name: 'cursor',
+    required: false,
+    type: String,
+    description: '페이지네이션 커서',
   })
   @ApiCommonOkResponse(GetEventsResponseDTO)
   async getEvents(
