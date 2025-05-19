@@ -80,3 +80,6 @@ http://locahost:8081/swagger
 #### 특이사항
 
 - 위에서 말한것과 같이 jwt에 대한 유효성 검사는 auth-server(발급한 인증/인가 서버) 에 책임이 있다고 생각하여 `AuthGuard('jwt')` 를 쓰는 대신에 `customAuthGuard` 를 사용하여 `auth-server` 의 `token-introspection` 을 통해서 결과 값을 받고 인증 여부를 판별하도록 해두었습니다.
+
+- 인가가 필요한경우에 대한 flow
+  ![인가](./image/flow.png)
