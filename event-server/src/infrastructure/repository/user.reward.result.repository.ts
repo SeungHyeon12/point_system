@@ -53,14 +53,14 @@ export class UserRewardResultRepository
         userId,
         deletedAt: null,
       })
-      .sort({ createdAt: -1 });
+      .sort({ _id: -1 });
     return data.map((rewardResult) => this.toDomain(rewardResult));
   }
 
   async getAll(): Promise<UserRewardResult[]> {
     const data = await this.userRewardResultModel
       .find({ deletedAt: null })
-      .sort({ createdAt: -1 });
+      .sort({ _id: -1 });
     return data.map((rewardResult) => this.toDomain(rewardResult));
   }
 

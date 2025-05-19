@@ -33,7 +33,7 @@ export class EventRepository implements EventRepositoryInterface {
   async getAllWithoutDeleted(): Promise<Event[]> {
     const data = await this.eventModel
       .find({ deletedAt: null })
-      .sort({ createdAt: -1 });
+      .sort({ _id: -1 });
     return data.map((event) => this.toDomain(event));
   }
 

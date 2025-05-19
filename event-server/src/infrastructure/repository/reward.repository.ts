@@ -25,7 +25,7 @@ export class RewardRepository implements RewardRepositoryInterface {
   async getAll(): Promise<Reward[]> {
     const data = await this.rewardModel
       .find({ deletedAt: null })
-      .sort({ createdAt: -1 });
+      .sort({ _id: -1 });
     return data.map((reward) => this.toDomain(reward));
   }
 
